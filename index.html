@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Learning App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background-color: #ffcc80;
+        }
+        .nav button {
+            padding: 10px;
+            border: none;
+            background: #ffa726;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .nav button:hover, .nav button.active {
+            background: #fb8c00;
+        }
+        .section {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .clock-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+        }
+        .clock-svg {
+            width: 100%;
+            height: 100%;
+        }
+        .hand {
+            stroke-linecap: round;
+            stroke-width: 3;
+            transform-origin: center;
+        }
+        #hour-hand { stroke: red; }
+        #minute-hand { stroke: blue; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <button id="tab-read-clock" onclick="showSection('read-clock')">Read the Clock</button>
+        <button id="tab-draw-clock" onclick="showSection('draw-clock')">Draw the Clock</button>
+        <button id="tab-write-time" onclick="showSection('write-time')">Write the Time</button>
+        <button id="tab-word-problems" onclick="showSection('word-problems')">Time Word Problems</button>
+        <button id="tab-memory-match" onclick="showSection('memory-match')">Time Memory Match</button>
+    </div>
+    
+    <div class="container">
+        <div id="read-clock" class="section active">
+            <h2>Read the Clock</h2>
+            <label for="time-interval">Time Interval:</label>
+            <select id="time-interval">
+                <option>Any minute</option>
+                <option>5-min increments</option>
+            </select>
+            <button onclick="generateRandomTime()">Generate Random Time</button>
+            <div class="clock-container">
+                <svg class="clock-svg" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" stroke="black" stroke-width="3" fill="white"/>
+                    <line id="hour-hand" class="hand" x1="50" y1="50" x2="50" y2="30" stroke="red"/>
+                    <line id="minute-hand" class="hand" x1="50" y1="50" x2="50" y2="20" stroke="blue"/>
+                </svg>
+            </div>
+            <input type="number" id="hour-input" min="1" max="12" placeholder="Hour">
+            <input type="number" id="minute-input" min="0" max="59" placeholder="Minute">
+            <button onclick="checkClockAnswer()">Check My Answer</button>
+            <button onclick="showClockAnswer()">Show Answer</button>
+            <p id="clock-feedback"></p>
+        </div>
+    </div>
+    
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + id).classList.add('active');
+        }
+
+        function generateRandomTime() {
+            let hour = Math.floor(Math.random() * 12) + 1;
+            let minuteOptions = document.getElementById("time-interval").value === "5-min increments" ? 5 : 1;
+            let minute = Math.floor(Math.random() * (60 / minuteOptions)) * minuteOptions;
+            rotateClockHands(hour, minute);
+        }
+
+        function rotateClockHands(hour, minute) {
+            let hourDeg = (hour % 12) * 30 + (minute / 60) * 30;
+            let minuteDeg = minute * 6;
+            document.getElementById("hour-hand").setAttribute("transform", `rotate(${hourDeg}, 50, 50)`);
+            document.getElementById("minute-hand").setAttribute("transform", `rotate(${minuteDeg}, 50, 50)`);
+        }
+
+        function checkClockAnswer() {
+            let hour = document.getElementById("hour-input").value;
+            let minute = document.getElementById("minute-input").value;
+            document.getElementById("clock-feedback").innerText = `You entered: ${hour}:${minute}`;
+        }
+
+        function showClockAnswer() {
+            document.getElementById("clock-feedback").innerText = "Correct Answer will be displayed here.";
+        }
+    </script>
+</body>
+</html>
